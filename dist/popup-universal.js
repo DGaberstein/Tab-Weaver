@@ -1427,7 +1427,7 @@ class UniversalTabWeaver {
         if (e) try {
             const t = `User Feedback: ${e.substring(0,50)}${e.length>50?"...":""}`;
             const a = `## User Feedback\n\n**Feedback:**\n${e}\n\n**Browser Information:**\n- Browser: ${this.browserInfo?.displayName||"Unknown"}\n- Version: Tab Weaver v1.0.0\n- User Agent: ${navigator.userAgent}\n- Timestamp: ${(new Date).toISOString()}\n\n**Additional Context:**\n- Extension Version: 1.0.0\n- Submitted via: Tab Weaver Feedback System\n\n---\n*This issue was created automatically from the Tab Weaver extension feedback system.*`;
-            const s = `https://github.com/your-username/tab-weaver/issues/new?title=${encodeURIComponent(t)}&body=${encodeURIComponent(a)}`;
+            const s = `https://github.com/DGaberstein/Tab-Weaver/issues/new?title=${encodeURIComponent(t)}&body=${encodeURIComponent(a)}`;
             await this.sendFeedback();
             chrome.tabs.create({
                 url: s
@@ -1441,7 +1441,7 @@ class UniversalTabWeaver {
     }
     createGitHubIssue() {
         chrome.tabs.create({
-            url: "https://github.com/your-username/tab-weaver/issues/new?template=feedback.md"
+            url: "https://github.com/DGaberstein/Tab-Weaver/issues/new"
         });
         this.showToast("Opening GitHub Issues! 🚀", "info");
         this.trackAction("open_github_issues")
