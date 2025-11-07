@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Memes Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .meme-test {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        .special { 
+            border-left: 4px solid #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+        h1 { text-align: center; }
+        .tab-count { color: #ffd93d; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🕸️ Tab Weaver Meme System Test 🎉</h1>
+        
+        <div id="meme-tests"></div>
+        
+        <div style="margin-top: 20px; text-align: center; opacity: 0.7;">
+            <small>This demonstrates the epic meme reactions for different tab counts!</small>
+        </div>
+    </div>
+
+    <script src="dist/tab-memes.js"></script>
+    <script>
+        function runMemeTests() {
+            const testContainer = document.getElementById('meme-tests');
+            
+            // Test special numbers
+            const specialNumbers = [1, 3, 5, 7, 12, 13, 25, 42, 69, 100, 420, 666, 1337, 9000];
+            
+            // Test regular ranges
+            const regularNumbers = [2, 8, 15, 22, 35, 55, 87, 150, 234, 500];
+            
+            let html = '<h3>🎯 Special Numbers (Meme Numbers):</h3>';
+            
+            specialNumbers.forEach(count => {
+                const meme = window.TabMemes.getTabMeme(count);
+                html += `<div class="meme-test special">
+                    <span class="tab-count">${count} tabs:</span> ${meme}
+                </div>`;
+            });
+            
+            html += '<h3>📊 Regular Ranges:</h3>';
+            
+            regularNumbers.forEach(count => {
+                const meme = window.TabMemes.getTabMeme(count);
+                html += `<div class="meme-test">
+                    <span class="tab-count">${count} tabs:</span> ${meme}
+                </div>`;
+            });
+            
+            testContainer.innerHTML = html;
+        }
+        
+        // Run tests when page loads
+        if (window.TabMemes) {
+            runMemeTests();
+        } else {
+            document.getElementById('meme-tests').innerHTML = '<div class="meme-test">❌ Meme system failed to load!</div>';
+        }
+    </script>
+</body>
+</html>

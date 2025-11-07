@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Tab Weaver Extension</title>
+</head>
+<body>
+    <h1>Test The Tab Weaver Extension</h1>
+    <button onclick="testExtension()">Test Extension Connection</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testExtension() {
+            try {
+                const response = await chrome.runtime.sendMessage('extension-id', {type: 'GET_TAB_DATA'});
+                document.getElementById('result').innerHTML = 'Extension working! Found ' + Object.keys(response).length + ' tabs';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Extension test failed: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

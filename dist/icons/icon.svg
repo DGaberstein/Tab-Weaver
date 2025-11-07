@@ -1,0 +1,33 @@
+<!-- SVG Icon for The Tab Weaver -->
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="58" fill="#6366f1" stroke="#4f46e5" stroke-width="4"/>
+  
+  <!-- Tab weaving pattern -->
+  <g fill="#ffffff" opacity="0.9">
+    <!-- Main tabs -->
+    <rect x="20" y="35" width="28" height="20" rx="3" fill="#ffffff"/>
+    <rect x="52" y="35" width="28" height="20" rx="3" fill="#e5e7eb"/>
+    <rect x="84" y="35" width="24" height="20" rx="3" fill="#e5e7eb"/>
+    
+    <!-- Second row -->
+    <rect x="25" y="60" width="25" height="18" rx="3" fill="#e5e7eb"/>
+    <rect x="54" y="60" width="25" height="18" rx="3" fill="#ffffff"/>
+    <rect x="83" y="60" width="22" height="18" rx="3" fill="#e5e7eb"/>
+    
+    <!-- Third row -->
+    <rect x="30" y="82" width="22" height="16" rx="2" fill="#e5e7eb"/>
+    <rect x="56" y="82" width="22" height="16" rx="2" fill="#e5e7eb"/>
+    <rect x="82" y="82" width="20" height="16" rx="2" fill="#ffffff"/>
+  </g>
+  
+  <!-- Weaving threads -->
+  <g stroke="#fbbf24" stroke-width="2" fill="none" opacity="0.8">
+    <path d="M15 45 Q64 25 115 45" stroke-dasharray="4,2"/>
+    <path d="M15 70 Q64 50 115 70" stroke-dasharray="4,2"/>
+    <path d="M15 90 Q64 70 115 90" stroke-dasharray="4,2"/>
+  </g>
+  
+  <!-- Center glow -->
+  <circle cx="64" cy="64" r="8" fill="#fbbf24" opacity="0.6"/>
+</svg>

@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Weaver</title>
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --secondary-color: #4285f4;
+            --dark-bg: #1a1a1a;
+            --darker-bg: #0d0d0d;
+            --light-text: #ffffff;
+            --gray-bg: #333333;
+            --border-color: #444444;
+            --hover-bg: #2a2a2a;
+            
+            /* Apple Glossy Milky Variables */
+            --glass-white: rgba(255, 255, 255, 0.15);
+            --glass-white-hover: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --milky-blur: blur(20px);
+            --subtle-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Apple-style subtle animations */
+        @keyframes milky-shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        @keyframes glass-float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); }
+            100% { transform: translateY(0px); }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 400px;
+            height: 600px;
+            /* Apple-style translucent background with vibrancy */
+            background: linear-gradient(135deg, 
+                rgba(13, 13, 13, 0.85) 0%, 
+                rgba(26, 26, 26, 0.8) 50%,
+                rgba(20, 20, 20, 0.85) 100%);
+            color: var(--light-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            /* Enhanced Apple vibrancy effect */
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+        }
+
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            /* Ultra-transparent glassmorphism like macOS */
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.03) 50%,
+                rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(60px) saturate(200%);
+            -webkit-backdrop-filter: blur(60px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* Apple-style glossy overlay */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.5) 50%, 
+                transparent 100%);
+            z-index: 1;
+        }
+
+        .header {
+            /* Ultra-transparent Apple-style header with vibrancy */
+            background: linear-gradient(135deg, 
+                rgba(26, 115, 232, 0.6) 0%, 
+                rgba(66, 133, 244, 0.5) 100%);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Apple-style glossy highlight on header */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                rgba(255, 255, 255, 0.03) 100%);
+            border-radius: 16px 16px 0 0;
+            pointer-events: none;
+        }
+
+        .title-section {
+            flex: 1;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: normal;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .subtitle-main {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .subtitle-status {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 12px;
+        }
+
+        .subtitle-status:empty {
+            display: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 2px 6px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Apple-style button highlight */
+        .header-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.25) 0%, 
+                rgba(255, 255, 255, 0.08) 100%);
+            border-radius: 10px 10px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-btn:hover::before {
+            opacity: 1;
+        }
+
+        .header-btn:active {
+            transform: translateY(0);
+            box-shadow: var(--inner-shadow);
+        }
+
+        .search-section {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: var(--milky-blur);
+            -webkit-backdrop-filter: var(--milky-blur);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            /* Ultra-transparent Apple search bar */
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            color: var(--light-text);
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-input:focus {
+            border-color: rgba(26, 115, 232, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 0 3px rgba(26, 115, 232, 0.15),
+                0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .actions {
+            padding: 10px 16px;
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Apple-style button highlights */
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                rgba(255, 255, 255, 0.03) 100%);
+            border-radius: 12px 12px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .action-btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn-hibernate {
+            background: rgba(66, 133, 244, 0.5);
+            color: white;
+        }
+
+        .btn-hibernate:hover {
+            background: rgba(66, 133, 244, 0.7);
+            transform: translateY(-1px);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 6px 16px rgba(66, 133, 244, 0.25);
+        }
+
+        .btn-restore {
+            background: rgba(52, 168, 83, 0.5);
+            color: white;
+        }
+
+        .btn-restore:hover {
+            background: rgba(52, 168, 83, 0.7);
+            transform: translateY(-1px);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 6px 16px rgba(52, 168, 83, 0.25);
+        }
+
+        .btn-refresh {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .btn-refresh:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 6px 16px rgba(255, 255, 255, 0.15);
+        }
+
+        .tabs-container {
+            flex: 1;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+        }
+
+        .tab-group {
+            margin-bottom: 2px;
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+            margin: 2px;
+            border-radius: 10px;
+        }
+
+        /* Apple-style group header highlight */
+        .group-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 8px 8px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .group-header:hover {
+            background: var(--glass-white-hover);
+            transform: translateY(-1px);
+            box-shadow: 
+                var(--inner-shadow),
+                0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+
+        .group-header:hover::before {
+            opacity: 1;
+        }
+
+        .group-header.collapsed .group-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .group-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .group-favicon {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            margin-right: 4px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .group-toggle {
+            font-size: 12px;
+            color: var(--primary-color);
+            transition: transform 0.2s;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .group-tabs {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: var(--milky-blur);
+            -webkit-backdrop-filter: var(--milky-blur);
+        }
+
+        .tab-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            margin: 1px 4px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Apple-style tab item highlight */
+        .tab-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.01) 100%);
+            border-radius: 10px 10px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .tab-item:hover::before {
+            opacity: 1;
+        }
+
+        .tab-item.active {
+            background: rgba(26, 115, 232, 0.2);
+            border-left: 3px solid rgba(26, 115, 232, 0.8);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 0 1px rgba(26, 115, 232, 0.3);
+        }
+
+        .tab-favicon {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            flex-shrink: 0;
+            border-radius: 2px;
+        }
+
+        .tab-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tab-title {
+            color: var(--light-text);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-title.scrolling {
+            white-space: nowrap;
+        }
+
+        .tab-title.scrolling .title-text {
+            display: inline-block;
+            animation: scroll-text-slow 20s ease-in-out infinite;
+            animation-delay: 3s;
+        }
+
+        .tab-url {
+            color: #999;
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-metadata {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .tab-meta-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 9px;
+            color: #ccc;
+        }
+
+        .tab-actions {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .tab-action-btn {
+            width: 24px;
+            height: 24px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .tab-action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .tab-action-btn.save.saved {
+            color: #ff6b6b;
+        }
+
+        .tab-action-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .no-tabs {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @keyframes scroll-text-slow {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+            10% {
+                transform: translate3d(0, 0, 0);
+            }
+            90% {
+                transform: translate3d(-100%, 0, 0);
+            }
+            100% {
+                transform: translate3d(-100%, 0, 0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-bg);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--gray-bg);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 3px solid #34a853;
+        }
+
+        .toast.error {
+            border-left: 3px solid #ea4335;
+        }
+
+        .toast.info {
+            border-left: 3px solid #4285f4;
+        }
+
+        .toast.warning {
+            border-left: 3px solid #fbbc04;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div class="title">🕸️ Tab Weaver</div>
+                <div class="subtitle-wrapper">
+                    <div class="subtitle-main" id="headerTabCount">Managing 0 tabs</div>
+                    <div class="subtitle-status" id="headerTabStatus"></div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" id="help-btn" title="Help">?</button>
+                <button class="header-btn" id="settings-btn" title="Settings">⚙</button>
+                <button class="header-btn" id="feedback-btn" title="Feedback">💬</button>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search tabs...">
+        </div>
+
+        <div class="actions">
+            <button class="action-btn btn-hibernate" id="hibernateAllBtn">❄️ Hibernate All</button>
+            <button class="action-btn btn-restore" id="restoreAllBtn">🔥 Restore All</button>
+            <button class="action-btn btn-refresh" id="refreshBtn">🔄 Refresh</button>
+        </div>
+
+        <div class="tabs-container" id="tabsContainer">
+            <div class="no-tabs">Loading tabs...</div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="help-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🕸️ Tab Weaver Help</h3>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h4>🎯 Quick Start</h4>
+                    <p>Welcome to Tab Weaver! Here's how to use it:</p>
+                    <ul>
+                        <li><strong>🔍 Search:</strong> Type in the search box to filter tabs by title or URL</li>
+                        <li><strong>📂 Groups:</strong> Click group headers to expand/collapse tab groups</li>
+                        <li><strong>❄️ Hibernate:</strong> Save memory by hibernating inactive tabs</li>
+                        <li><strong>💖 Save:</strong> Protect important tabs from hibernation and closing</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h4>🛠️ Tab Actions</h4>
+                    <ul>
+                        <li><strong>🤍/💖 Save:</strong> Click to save/unsave a tab (protects from hibernation)</li>
+                        <li><strong>❄️ Hibernate:</strong> Put tab to sleep to save memory</li>
+                        <li><strong>🔥 Restore:</strong> Wake up hibernated tabs</li>
+                        <li><strong>✕ Close:</strong> Close tabs (saved tabs are protected)</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>⌨️ Keyboard Shortcuts</h4>
+                    <ul>
+                        <li><strong>Ctrl+Shift+D:</strong> Open developer panel</li>
+                        <li><strong>Click tab:</strong> Switch to that tab</li>
+                        <li><strong>Click group:</strong> Collapse/expand group</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>💡 Tips</h4>
+                    <ul>
+                        <li>Save important tabs with 💖 to prevent accidental hibernation</li>
+                        <li>Use search to quickly find specific tabs</li>
+                        <li>Groups automatically organize tabs by domain</li>
+                        <li>Hibernated tabs use virtually no memory</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-row">
+                    <button class="btn-primary" id="help-close">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedback-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send Feedback</h3>
+            </div>
+            <div class="modal-body">
+                <textarea id="feedback-text" placeholder="Tell us what you think..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="feedback-cancel">Cancel</button>
+                <button class="btn-primary" id="feedback-send">Send</button>
+                <button class="btn-primary" id="feedback-send-github">Send to GitHub</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal" id="error-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Error Occurred</h3>
+            </div>
+            <div class="modal-body">
+                <p id="error-details"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="error-dismiss">Dismiss</button>
+                <button class="btn-primary" id="error-report">Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Settings</h3>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="analytics-enabled">
+                        Enable Analytics
+                        <span class="help-icon" title="Track usage patterns to help improve Tab Weaver. No personal data is collected.">?</span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="error-reporting">
+                        Enable Error Reporting
+                        <span class="help-icon" title="Automatically report errors to help fix bugs faster. Only error logs are sent.">?</span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        Auto Hibernate Time:
+                        <select id="auto-hibernate-time">
+                            <option value="15">15 minutes</option>
+                            <option value="30">30 minutes</option>
+                            <option value="60">1 hour</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="hibernate-on-memory">
+                        Hibernate on Memory Pressure
+                        <span class="help-icon" title="Automatically hibernate tabs when your system is running low on memory to keep things smooth.">?</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-row">
+                    <button class="btn-secondary" id="export-data">Export Data</button>
+                    <button class="btn-secondary" id="clear-data">Clear Data</button>
+                    <button class="btn-secondary" id="view-feedback">View Feedback</button>
+                </div>
+                <div class="modal-footer-row">
+                    <button class="btn-secondary" id="settings-cancel">Cancel</button>
+                    <button class="btn-primary" id="settings-save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Viewer Modal -->
+    <div class="modal" id="feedback-viewer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Feedback History</h3>
+            </div>
+            <div class="modal-body">
+                <div id="feedback-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="feedback-viewer-close">Close</button>
+                <button class="btn-secondary" id="create-github-issue">Create GitHub Issue</button>
+                <button class="btn-secondary" id="send-email-feedback">Send Email</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: var(--milky-blur);
+            -webkit-backdrop-filter: var(--milky-blur);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--glass-white);
+            backdrop-filter: var(--milky-blur);
+            -webkit-backdrop-filter: var(--milky-blur);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80%;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                var(--inner-shadow),
+                0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        /* Apple-style modal highlight */
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.5) 50%, 
+                transparent 100%);
+            z-index: 1;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: var(--milky-blur);
+            -webkit-backdrop-filter: var(--milky-blur);
+            padding: 16px;
+            border-bottom: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .modal-header h3 {
+            color: var(--light-text);
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .modal-body textarea {
+            width: 100%;
+            height: 100px;
+            background: var(--gray-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--light-text);
+            padding: 8px;
+            resize: vertical;
+            outline: none;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .modal-footer-row {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .modal-footer-row:first-child {
+            justify-content: center;
+        }
+
+        .modal-footer-row:last-child {
+            justify-content: flex-end;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 80px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1557b0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--gray-bg);
+            color: var(--light-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: #404040;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-color: #555;
+        }
+
+        /* Settings Styles */
+        .setting-group {
+            margin-bottom: 16px;
+        }
+
+        .setting-group label {
+            color: var(--light-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setting-group select {
+            background: var(--gray-bg);
+            border: 1px solid var(--border-color);
+            color: var(--light-text);
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        /* Help Icon Styles - Apple-inspired */
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: help;
+            margin-left: 4px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .help-icon:hover {
+            background: rgba(26, 115, 232, 0.3);
+            border-color: rgba(26, 115, 232, 0.5);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        /* Help Modal Styles */
+        .help-section {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .help-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .help-section h4 {
+            color: var(--secondary-color);
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .help-section ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .help-section li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+            color: var(--light-text);
+        }
+
+        .help-section p {
+            margin: 8px 0;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: var(--light-text);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-bg);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- Load epic tab memes first -->
+    <script src="tab-memes.js"></script>
+    <script src="popup-universal.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{
+  "name": "the-tab-weaver",
+  "version": "1.1.0",
+  "description": "Ultimate tab management solution with hibernation, workspaces, and performance optimization",
+  "private": true,
+  "scripts": {
+    "build": "webpack --mode=production --progress",
+    "build:analyze": "webpack-bundle-analyzer dist/vendors.js",
+    "dev": "webpack --mode=development --watch --progress",
+    "clean": "rimraf dist",
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
+    "type-check": "tsc --noEmit",
+    "package": "npm run clean && npm run type-check && npm run lint && npm run build && web-ext build --source-dir=. --artifacts-dir=packages",
+    "update-deps": "npm update && npm audit fix"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.7",
+    "@babel/preset-env": "^7.25.7",
+    "@babel/preset-react": "^7.25.7",
+    "@types/chrome": "^0.1.27",
+    "@types/react": "^18.3.26",
+    "@types/react-dom": "^18.3.7",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "babel-loader": "^10.0.0",
+    "copy-webpack-plugin": "^13.0.1",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "rimraf": "^6.1.0",
+    "sass": "^1.82.0",
+    "sass-loader": "^16.0.6",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.2",
+    "web-ext": "^9.1.0",
+    "webpack": "^5.97.1",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "core-js": "^3.39.0",
+    "date-fns": "^4.1.0",
+    "fuse.js": "^7.0.0",
+    "lucide-react": "^0.552.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
